@@ -36,5 +36,18 @@ public class App
         System.out.println( "Port number: " + p);
         System.out.println( "Status of the instance: " + s);
 
+        // Check the status of the instance. If it is 0, then it is the master instance, otherwise it is the slave instance.
+        // If it is the master instance, then we must create a Server object and start its task
+        // If it is the slave instance, then we must create a Client object and start its task.
+        if (s == 0) {
+            // Create a Server object and start it
+            Server server = new Server(n, p);
+            server.start();
+        } else {
+            // Create a Client object and start it
+            // Client client = new Client(n, p);
+            // client.start();
+        }
+
     }
 }
