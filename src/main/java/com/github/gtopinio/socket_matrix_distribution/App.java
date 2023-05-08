@@ -1,5 +1,7 @@
 package com.github.gtopinio.socket_matrix_distribution;
 
+import java.util.Scanner;
+
 /**
  * Author: Mark Genesis C. Topinio
  * Creation Date: May 09, 2023 1:13 AM
@@ -17,9 +19,10 @@ public class App
         int n = -1;  // Size of the square matrix
         int p = -1;  // Port number
         int s = -1;  // Status of the instance
-        // Prompt user for input and store it to 'n'
-        System.out.print("Enter the size of the square matrix: ");
-        n = Integer.parseInt(System.console().readLine());
+
+        Scanner reader = new Scanner(System.in);
+        // Get user input size and store it to 'n'
+        n = getSize(reader);
         // Prompt user for input and store it to 'p'
         System.out.print("Enter the port number: ");
         p = Integer.parseInt(System.console().readLine());
@@ -48,6 +51,27 @@ public class App
             // Client client = new Client(n, p);
             // client.start();
         }
+        
+    }
 
+    // method for getting user input size
+    private static int getSize(Scanner reader){
+        int size = -1;
+        // Get the user input. Must be divisible by 10
+        
+        while(true){
+            System.out.print("Enter the size of the square matrix: ");
+            size = reader.nextInt();
+
+            if(size % 10 == 0 && size > 0){
+                size = size+1; // increase valid size for proper indexing for the array
+                break;
+            } else {
+                System.out.println("Please enter a positive integer divisible by 10.");
+            }
+
+        }
+        
+        return size;
     }
 }
