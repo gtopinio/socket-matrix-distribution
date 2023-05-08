@@ -1,0 +1,7 @@
+.vscode/
+target/
+*.iml
+*.log
+dependency-reduced-pom.xml
+*.swp
+*.class
