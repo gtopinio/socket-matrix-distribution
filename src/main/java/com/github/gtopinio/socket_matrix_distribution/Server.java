@@ -20,11 +20,19 @@ public class Server {
 
     public void start() {
         System.out.println("---------------- SERVER RUNNING ----------------");
+        
         // See if population of array is correct
+        // System.out.println("---------------- INITIAL ARRAY ----------------");
         // print2DArray(this.lowResArray);
+        // System.out.println("---------------- END OF INITIAL ARRAY ----------------");
 
         // First, we should interpolate per row, but only those rows that have values where we could interpolate
         interpolatePerRow(this.lowResArray);
+
+        // See if population of array is correct
+        // System.out.println("---------------- PARTIALLY INTERPOLATED ARRAY ----------------");
+        // print2DArray(this.lowResArray);
+        // System.out.println("---------------- END OF PARTIALLY INTERPOLATED ARRAY ----------------");
     }
 
     private void interpolatePerRow(ArrayList<ArrayList<Float>> arr) {
