@@ -141,7 +141,7 @@ public class Server {
                     System.out.println(i);
                 }
             }
-            System.out.println("Closing connection");
+            System.out.println("Closing connection...");
     
             // close connection
             socket.close();
