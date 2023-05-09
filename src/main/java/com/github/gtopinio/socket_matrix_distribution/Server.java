@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Random;
 
 public class Server {
-    private int n;
-    private int p;
+    private int arraySize;
+    private int portNumber;
     private ArrayList<ArrayList<Float>> lowResArray;    // Used for the initial form of the array (low resolution)
     private long startTime;                             // start time variable
     private long endTime;                               // end time variable
 
     public Server(int n, int p) {
-        this.n = n;
-        this.p = p;
-        this.lowResArray = populateArray(this.n);
+        this.arraySize = n;
+        this.portNumber = p;
+        this.lowResArray = populateArray(this.arraySize);
     }
 
     public void start() {
