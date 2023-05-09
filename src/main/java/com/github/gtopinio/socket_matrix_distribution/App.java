@@ -24,8 +24,7 @@ public class App
         // Get user input size and store it to 'n'
         n = getSize(reader);
         // Prompt user for input and store it to 'p'
-        System.out.print("Enter the port number: ");
-        p = Integer.parseInt(System.console().readLine());
+        p = getPortNumber(reader);
         // Prompt user for input and store it to 's'. S is either 0 or 1, 0 for master and 1 for slave, 
         // so we must continue to prompt the user until he/she enters 0 or 1
         while (s != 0 && s != 1) {
@@ -73,5 +72,25 @@ public class App
         }
         
         return size;
+    }
+
+    // method for getting the proper port number, which must be equal or greater than 5000
+    private static int getPortNumber(Scanner reader){
+        int portNumber = -1;
+        // Get the user input. Must be divisible by 10
+        
+        while(true){
+            System.out.print("Enter the port number: ");
+            portNumber = reader.nextInt();
+
+            if(portNumber >= 5000){
+                break;
+            } else {
+                System.out.println("Please enter a port number equal or greater than 5000.");
+            }
+
+        }
+        
+        return portNumber;
     }
 }
