@@ -47,8 +47,8 @@ public class App
             server.start();
         } else {
             // Create a Client object and start it
-            // Client client = new Client(n, p);
-            // client.start();
+            Client client = new Client(p);
+            client.start();
         }
         
     }
