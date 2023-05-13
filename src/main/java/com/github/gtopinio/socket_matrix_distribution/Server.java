@@ -114,34 +114,20 @@ public class Server {
 
     // method for starting the server and listening for a connection
     private void serverListen(){
+        Boolean isRunning = true;
+
         try{
             this.server = new ServerSocket(this.portNumber);
             System.out.println("Server instantiated at port " + this.portNumber);
 
-            System.out.println("Waiting for a client to connect...");
-            this.socket = server.accept();
-            System.out.println("Client accepted with a port number of " + this.socket.getPort());
+            System.out.println("Waiting for client(s) to connect...");
+            
+            while(isRunning){
+                this.socket = server.accept();
+                System.out.println("Client connected using port " + this.socket.getPort());
 
-            // takes input from the client socket
-            this.in = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
-
-            String line = "";
-
-            // reads message from client until "Over" is sent
-            while (!line.equals("Over"))
-            {
-                try
-                {
-                    line = in.readUTF();
-                    System.out.println(line);
-    
-                }
-                catch(IOException i)
-                {
-                    System.out.println(i);
-                }
             }
-            System.out.println("Closing connection...");
+            
     
             // close connection
             socket.close();
