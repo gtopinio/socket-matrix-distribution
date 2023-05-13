@@ -138,9 +138,9 @@ public class Client {
             System.out.println("Connected. Listening to server with ip address: " + socket.getRemoteSocketAddress());
             // continuously receive arrays from server
             while (true) {
-                int[] receivedArr = receiveData();
+                ArrayList<Integer> receivedArr = receiveData();
                 for (int i : receivedArr) {
-                    System.out.println(i);
+                    System.out.print(i + " ");
                 }
             }
 
@@ -155,12 +155,12 @@ public class Client {
         }
     }
 
-    private int[] receiveData() throws IOException {
+    private ArrayList<Integer> receiveData() throws IOException {
         DataInputStream inputStream = new DataInputStream(socket.getInputStream());
         int length = inputStream.readInt();
-        int[] arr = new int[length];
+        ArrayList<Integer> arr = new ArrayList<Integer>();
         for (int i = 0; i < length; i++) {
-            arr[i] = inputStream.readInt();
+            arr.add(inputStream.readInt());
         }
         return arr;
     }

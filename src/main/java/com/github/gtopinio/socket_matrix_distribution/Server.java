@@ -127,8 +127,13 @@ public class Server {
                 this.socket = server.accept();
                 System.out.println("Client connected using port " + this.socket.getPort());
 
-                // send an array to the client
-                int[] arr = {1,2,3,4,5};
+                // send a defined ArrayList to the client containing 1 to 5
+                ArrayList<Integer> arr = new ArrayList<>();
+                arr.add(1);
+                arr.add(2);
+                arr.add(3);
+                arr.add(4);
+                arr.add(5);
                 sendData(arr);
 
             }
@@ -142,9 +147,9 @@ public class Server {
             System.out.println(i);
         }
     }
-    private void sendData(int[] arr) throws IOException {
+    private void sendData(ArrayList<Integer> arr) throws IOException {
         DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-        outputStream.writeInt(arr.length);
+        outputStream.writeInt(arr.size());
         for (int i : arr) {
             outputStream.writeInt(i);
         }
