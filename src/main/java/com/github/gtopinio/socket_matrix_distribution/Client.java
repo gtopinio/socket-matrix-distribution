@@ -124,7 +124,15 @@ public class Client {
     private void clientConnect() {
          // establish a connection
          try {
-            socket = new Socket(this.serverAddress, this.portNumber);
+            // We must keep reaching out to the server until we get a connection
+            while(true) {
+                try {
+                    socket = new Socket(this.serverAddress, this.portNumber);
+                    break;
+                } catch (ConnectException e) {
+                    System.out.println("Connection refused. Retrying...");
+                }
+            }
             System.out.println("Connected. Listening to server with ip address: " + socket.getRemoteSocketAddress());
  
             // takes input from terminal using BufferedReader
