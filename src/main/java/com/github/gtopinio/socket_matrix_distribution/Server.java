@@ -4,15 +4,18 @@ import java.net.*;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 
 public class Server {
     private int arraySize;
     private int portNumber;
+    private int numberOfClients;
     private ArrayList<ArrayList<Float>> lowResArray;    // Used for the initial form of the array (low resolution)
     private long startTime;                             // start time variable
     private long endTime;                               // end time variable
@@ -25,7 +28,42 @@ public class Server {
     public Server(int n, int p) {
         this.arraySize = n;
         this.portNumber = p;
+        this.numberOfClients = this.readConfigFile();
         this.lowResArray = populateArray(this.arraySize);
+    }
+
+    private int readConfigFile() {
+        // Read the 'socket-comm.conf' file from the resources folder
+        // The file contains the IP address of the server
+
+        Properties prop = new Properties();
+        FileInputStream input = null;
+        String numClients = "";
+
+        try {
+            // Get the socket-comm.conf file from the resources folder
+            
+            // But get the base path first of the project
+            String basePath = new java.io.File(".").getCanonicalPath();
+            
+            // Then get the socket-comm.conf file from the resources folder by replacing the "\target" part of the path
+            // with "\src\main\java\com\github\gtopinio\socket_matrix_distribution\resources\socket-comm.conf"
+            String path = basePath.replace("\\target", "\\src\\main\\java\\com\\github\\gtopinio\\socket_matrix_distribution\\resources\\socket-comm.conf");
+
+            // Put the path to the input stream
+            input = new FileInputStream(path);
+
+            // Load the properties file
+            prop.load(input);
+
+            // Get the values of the properties
+            numClients = prop.getProperty("num-clients");
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        return Integer.parseInt(numClients);
     }
 
     public void start() {
@@ -38,6 +76,9 @@ public class Server {
 
         // First, we should interpolate per row, but only those rows that have values where we could interpolate
         interpolatePerRow(this.lowResArray);
+
+        // Show how many clients we must wait for
+        System.out.println("Waiting for " + this.numberOfClients + " client(s) to connect...");
 
         // See if population of array is correct
         // System.out.println("---------------- PARTIALLY INTERPOLATED ARRAY ----------------");
