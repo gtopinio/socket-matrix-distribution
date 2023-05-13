@@ -3,6 +3,7 @@ package com.github.gtopinio.socket_matrix_distribution;
 import java.net.*;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -126,9 +127,12 @@ public class Server {
                 this.socket = server.accept();
                 System.out.println("Client connected using port " + this.socket.getPort());
 
+                // send an array to the client
+                int[] arr = {1,2,3,4,5};
+                sendData(arr);
+
             }
             
-    
             // close connection
             socket.close();
             in.close();
@@ -137,5 +141,13 @@ public class Server {
         {
             System.out.println(i);
         }
+    }
+    private void sendData(int[] arr) throws IOException {
+        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+        outputStream.writeInt(arr.length);
+        for (int i : arr) {
+            outputStream.writeInt(i);
+        }
+        outputStream.flush();
     }
 }

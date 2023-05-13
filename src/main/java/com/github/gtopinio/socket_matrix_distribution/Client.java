@@ -2,7 +2,9 @@ package com.github.gtopinio.socket_matrix_distribution;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -134,13 +136,14 @@ public class Client {
                 }
             }
             System.out.println("Connected. Listening to server with ip address: " + socket.getRemoteSocketAddress());
- 
-            // takes input from terminal using BufferedReader
-            input = new BufferedReader(new InputStreamReader(System.in));
- 
-            // sends output to the socket
-            out = new DataOutputStream(
-                socket.getOutputStream());
+            // continuously receive arrays from server
+            while (true) {
+                int[] receivedArr = receiveData();
+                for (int i : receivedArr) {
+                    System.out.println(i);
+                }
+            }
+
         }
         catch (UnknownHostException u) {
             System.out.println(u);
@@ -150,30 +153,16 @@ public class Client {
             System.out.println(i);
             return;
         }
- 
-        // string to read message from input
-        String line = "";
- 
-        // keep reading until "Over" is input
-        while (!line.equals("Over")) {
-            try {
-                line = input.readLine();
-                out.writeUTF(line);
-            }
-            catch (IOException i) {
-                System.out.println(i);
-            }
+    }
+
+    private int[] receiveData() throws IOException {
+        DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+        int length = inputStream.readInt();
+        int[] arr = new int[length];
+        for (int i = 0; i < length; i++) {
+            arr[i] = inputStream.readInt();
         }
- 
-        // close the connection
-        try {
-            input.close();
-            out.close();
-            socket.close();
-        }
-        catch (IOException i) {
-            System.out.println(i);
-        }
+        return arr;
     }
 
 }
