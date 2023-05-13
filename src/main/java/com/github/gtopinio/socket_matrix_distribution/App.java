@@ -29,7 +29,13 @@ public class App
         // so we must continue to prompt the user until he/she enters 0 or 1
         while (s != 0 && s != 1) {
             System.out.print("Enter the status of the instance (0 for master, 1 for slave): ");
-            s = Integer.parseInt(System.console().readLine());
+            // There should be a try-catch block here to catch the exception if the user enters a non-integer value.
+            try {
+                s = Integer.parseInt(System.console().readLine());
+            } catch (Exception e) {
+                System.out.println("Please enter a valid integer value.");
+                reader.next();
+            }
         }
 
         // See if the user input is correct
@@ -60,7 +66,13 @@ public class App
         
         while(true){
             System.out.print("Enter the size of the square matrix: ");
-            size = reader.nextInt();
+            // There should be a try-catch block here to catch the exception if the user enters a non-integer value.
+            try {
+                size = Integer.parseInt(System.console().readLine());
+            } catch (Exception e) {
+                System.out.println("Please enter a valid integer value.");
+                reader.next();
+            }
 
             if(size % 10 == 0 && size > 0){
                 size = size+1; // increase valid size for proper indexing for the array
@@ -81,7 +93,13 @@ public class App
         
         while(true){
             System.out.print("Enter the port number: ");
-            portNumber = reader.nextInt();
+            // There should be a try-catch block here to catch the exception if the user enters a non-integer value.
+            try {
+                portNumber = Integer.parseInt(System.console().readLine());
+            } catch (Exception e) {
+                System.out.println("Please enter a valid integer value.");
+                reader.next();
+            }
 
             if(portNumber >= 5000){
                 break;
