@@ -164,6 +164,7 @@ public class Server {
         return populatedArr;
     }
 
+    // method for sub-dividing the 2D array into sub-matrices for each client to process and interpolate further on their own end
     private ArrayList<ArrayList<ArrayList<Float>>> subdivideMatrices(ArrayList<ArrayList<Float>> matrix, int numOfClients) {
         int numRows = matrix.size();
         int numCols = matrix.get(0).size();
