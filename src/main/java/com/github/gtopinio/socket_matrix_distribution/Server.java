@@ -3,6 +3,8 @@ package com.github.gtopinio.socket_matrix_distribution;
 import java.net.*;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -209,7 +211,7 @@ public class Server {
     // method for starting the server and listening for a connection
     private void serverListen(){
         Boolean isRunning = true;
-        int counter = 0;
+        int counterIndex = 0;
 
         try{
             this.server = new ServerSocket(this.portNumber);
@@ -217,13 +219,17 @@ public class Server {
 
             System.out.println("Waiting for client(s) to connect...");
             
+            // start the timer
+            this.startTime = System.nanoTime();
+
+            // while the server is running, accept connections from clients
             while(isRunning){
                 this.socket = server.accept();
                 System.out.println("Client connected using port " + this.socket.getPort());
 
-                // send the appropriate submatrix to the client by using the counter as the index
-                sendData(this.subMatrices.get(counter++), counter);
-
+                // send the appropriate submatrix to the client by using the counterIndex as the index
+                sendData(this.subMatrices.get(counterIndex++), counterIndex);
+                
             }
             
             // close connection
@@ -246,6 +252,16 @@ public class Server {
             // flush the output stream
             out.flush();
             System.out.println("Submatrix sent to client " + index + " successfully!");
+
+            // try to receive an "ACK" from the client
+            try{
+                ObjectInputStream in = new ObjectInputStream(this.socket.getInputStream());
+                String ack = (String) in.readObject();
+                System.out.println("Received from client " + index + ": " + ack);
+            }
+            catch(ClassNotFoundException e){
+                System.out.println(e);
+            }
         }
         catch(IOException i){
             System.out.println(i);

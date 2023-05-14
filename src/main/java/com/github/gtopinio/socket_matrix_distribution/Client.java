@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.Properties;
 
@@ -17,6 +18,8 @@ public class Client {
 
     // initialize socket and input output streams
     private Socket socket = null;
+
+    public static final String ACK_STRING = "ACK";
 
     public Client(int p) {
         this.portNumber = p;
@@ -119,21 +122,24 @@ public class Client {
         return roundedNum;
     }
 
+    // method for connecting to the server, receiving the submatrix, sending an acknowledgement, and interpolating the missing grid points
     private void clientConnect() {
          // establish a connection
          try {
             // We must keep reaching out to the server until we get a connection
             while(true) {
                 try {
-                    socket = new Socket(this.serverAddress, this.serverPort);
+                    this.socket = new Socket(this.serverAddress, this.serverPort);
                     break;
                 } catch (ConnectException e) {
                     System.out.println("Connection refused. Retrying...");
                 }
             }
             System.out.println("Connected. Listening to server with ip address: " + socket.getRemoteSocketAddress());
-            // continuously receive arrays from server
+
+            // receive the submatrix from the server and send an acknowledgement
             this.subMatrix = receiveData();
+
             // print the submatrix
             System.out.println("Submatrix received from server: ");
             for (int i = 0; i < this.subMatrix.size(); i++) {
@@ -143,6 +149,8 @@ public class Client {
                 System.out.println();
             }
 
+            // close the connection
+            this.socket.close();
         }
         catch (UnknownHostException u) {
             System.out.println(u);
@@ -154,28 +162,42 @@ public class Client {
         }
     }
 
-    // method for receiving the 2D submatrix from the server
-    private ArrayList<ArrayList<Float>> receiveData(){
+    // method for receiving the 2D submatrix from the server and sending an acknowledgement
+    private ArrayList<ArrayList<Float>> receiveData() {
         // initialize an empty submatrix
         ArrayList<ArrayList<Float>> temp = new ArrayList<ArrayList<Float>>();
-        try{
+        try {
+
             // initialize input stream
             ObjectInputStream in = new ObjectInputStream(this.socket.getInputStream());
             // receive the submatrix from the server
             @SuppressWarnings("unchecked")
-            ArrayList<ArrayList<Float>> submatrix  = (ArrayList<ArrayList<Float>>) in.readObject();
+            ArrayList<ArrayList<Float>> submatrix = (ArrayList<ArrayList<Float>>) in.readObject();
+            
+            // try to send an "ACK" message to the server
+            try {
+                // initialize output stream
+                ObjectOutputStream out = new ObjectOutputStream(this.socket.getOutputStream());
+                // send the "ACK" message to the server
+                out.writeObject(Client.ACK_STRING);
+                // flush the output stream
+                out.flush();
+            } catch (IOException i) {
+                System.out.println(i);
+            }
+
             // flush the input stream
             in.close();
             System.out.println("Submatrix received from server successfully!");
+
             return submatrix;
-        }
-        catch(IOException i){
+        } catch (IOException i) {
             System.out.println(i);
-        }
-        catch(ClassNotFoundException c){
+        } catch (ClassNotFoundException c) {
             System.out.println(c);
         }
         return temp;
     }
+
 
 }
