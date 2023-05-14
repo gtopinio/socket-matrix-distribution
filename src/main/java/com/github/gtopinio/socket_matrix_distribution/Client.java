@@ -2,18 +2,14 @@ package com.github.gtopinio.socket_matrix_distribution;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.Properties;
 
 public class Client {
-    private ArrayList<Integer> subMatrix;
+    private ArrayList<ArrayList<Float>> subMatrix;
     private String serverAddress;
     private int serverPort;
     private int portNumber;
@@ -21,8 +17,6 @@ public class Client {
 
     // initialize socket and input output streams
     private Socket socket = null;
-    private BufferedReader input = null;
-    private DataOutputStream out = null;
 
     public Client(int p) {
         this.portNumber = p;
@@ -139,11 +133,14 @@ public class Client {
             }
             System.out.println("Connected. Listening to server with ip address: " + socket.getRemoteSocketAddress());
             // continuously receive arrays from server
-            while (true) {
-                ArrayList<Integer> receivedArr = receiveData();
-                for (int i : receivedArr) {
-                    System.out.print(i + " ");
+            this.subMatrix = receiveData();
+            // print the submatrix
+            System.out.println("Submatrix received from server: ");
+            for (int i = 0; i < this.subMatrix.size(); i++) {
+                for (int j = 0; j < this.subMatrix.get(i).size(); j++) {
+                    System.out.print(this.subMatrix.get(i).get(j) + " ");
                 }
+                System.out.println();
             }
 
         }
@@ -157,14 +154,28 @@ public class Client {
         }
     }
 
-    private ArrayList<Integer> receiveData() throws IOException {
-        DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-        int length = inputStream.readInt();
-        ArrayList<Integer> arr = new ArrayList<Integer>();
-        for (int i = 0; i < length; i++) {
-            arr.add(inputStream.readInt());
+    // method for receiving the 2D submatrix from the server
+    private ArrayList<ArrayList<Float>> receiveData(){
+        // initialize an empty submatrix
+        ArrayList<ArrayList<Float>> temp = new ArrayList<ArrayList<Float>>();
+        try{
+            // initialize input stream
+            ObjectInputStream in = new ObjectInputStream(this.socket.getInputStream());
+            // receive the submatrix from the server
+            @SuppressWarnings("unchecked")
+            ArrayList<ArrayList<Float>> submatrix  = (ArrayList<ArrayList<Float>>) in.readObject();
+            // flush the input stream
+            in.close();
+            System.out.println("Submatrix received from server successfully!");
+            return submatrix;
         }
-        return arr;
+        catch(IOException i){
+            System.out.println(i);
+        }
+        catch(ClassNotFoundException c){
+            System.out.println(c);
+        }
+        return temp;
     }
 
 }

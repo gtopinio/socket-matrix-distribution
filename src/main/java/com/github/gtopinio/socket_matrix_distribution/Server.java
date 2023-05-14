@@ -1,11 +1,9 @@
 package com.github.gtopinio.socket_matrix_distribution;
 
 import java.net.*;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +22,6 @@ public class Server {
     //initialize socket and input stream
     private Socket          socket   = null;
     private ServerSocket    server   = null;
-    private DataInputStream in       =  null;
 
     public Server(int n, int p) {
         this.arraySize = n;
@@ -86,13 +83,17 @@ public class Server {
 
 
 
+
         // See if population of array is correct
         System.out.println("---------------- PARTIALLY INTERPOLATED ARRAY ----------------");
         print2DArray(this.lowResArray);
         System.out.println("---------------- END OF PARTIALLY INTERPOLATED ARRAY ----------------");
 
 
+
+
         System.out.println("---------------- SUBDIVIDING ARRAY ----------------");
+        // Subdivide the array into submatrices
         this.subMatrices = subdivideMatrices(this.lowResArray, this.numberOfClients);
 
         // // for every 2D array from using subdivideMatrices, we print it
@@ -105,10 +106,10 @@ public class Server {
 
 
 
-
+        
         System.out.println("---------------- INITIALIZING SOCKET CONNECTION ----------------");        
         // Server starts and waits for a connection
-        serverListen();
+        this.serverListen();
 
     }
 
@@ -208,6 +209,7 @@ public class Server {
     // method for starting the server and listening for a connection
     private void serverListen(){
         Boolean isRunning = true;
+        int counter = 0;
 
         try{
             this.server = new ServerSocket(this.portNumber);
@@ -219,32 +221,34 @@ public class Server {
                 this.socket = server.accept();
                 System.out.println("Client connected using port " + this.socket.getPort());
 
-                // send a defined ArrayList to the client containing 1 to 5
-                ArrayList<Integer> arr = new ArrayList<>();
-                arr.add(1);
-                arr.add(2);
-                arr.add(3);
-                arr.add(4);
-                arr.add(5);
-                sendData(arr);
+                // send the appropriate submatrix to the client by using the counter as the index
+                sendData(this.subMatrices.get(counter++), counter);
 
             }
             
             // close connection
-            socket.close();
-            in.close();
+            // socket.close();
+            // in.close();
         }
         catch(IOException i)
         {
             System.out.println(i);
         }
     }
-    private void sendData(ArrayList<Integer> arr) throws IOException {
-        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-        outputStream.writeInt(arr.size());
-        for (int i : arr) {
-            outputStream.writeInt(i);
+    
+    // method for sending the 2D submatrix to the client
+    private void sendData(ArrayList<ArrayList<Float>> submatrix, int index){
+        try{
+            // initialize output stream
+            ObjectOutputStream out = new ObjectOutputStream(this.socket.getOutputStream());
+            // send the submatrix to the client
+            out.writeObject(submatrix);
+            // flush the output stream
+            out.flush();
+            System.out.println("Submatrix sent to client " + index + " successfully!");
         }
-        outputStream.flush();
+        catch(IOException i){
+            System.out.println(i);
+        }
     }
 }
