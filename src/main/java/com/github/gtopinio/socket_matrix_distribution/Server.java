@@ -58,6 +58,7 @@ public class Server {
 
             // Get the values of the properties
             numClients = prop.getProperty("num-clients");
+            this.portNumber = Integer.parseInt(prop.getProperty("server-port"));
 
         } catch(IOException e) {
             e.printStackTrace();

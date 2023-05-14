@@ -15,6 +15,7 @@ import java.util.Properties;
 public class Client {
     private ArrayList<Integer> subMatrix;
     private String serverAddress;
+    private int serverPort;
     private int portNumber;
     private ArrayList<String> portNumberList;
 
@@ -69,6 +70,7 @@ public class Client {
 
             // Get the values of the properties
             this.serverAddress = prop.getProperty("server-ip-address");
+            this.serverPort = Integer.parseInt(prop.getProperty("server-port"));
             String clientPort = prop.getProperty("client-ports");
 
             // Print out the values for testing
@@ -129,7 +131,7 @@ public class Client {
             // We must keep reaching out to the server until we get a connection
             while(true) {
                 try {
-                    socket = new Socket(this.serverAddress, this.portNumber);
+                    socket = new Socket(this.serverAddress, this.serverPort);
                     break;
                 } catch (ConnectException e) {
                     System.out.println("Connection refused. Retrying...");
