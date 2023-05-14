@@ -17,6 +17,7 @@ public class Server {
     private int portNumber;
     private int numberOfClients;
     private ArrayList<ArrayList<Float>> lowResArray;    // Used for the initial form of the array (low resolution)
+    private ArrayList<ArrayList<ArrayList<Float>>> subMatrices; // Used for the subdivideMatrices method
     private long startTime;                             // start time variable
     private long endTime;                               // end time variable
 
@@ -70,23 +71,42 @@ public class Server {
     public void start() {
         System.out.println("---------------- SERVER RUNNING ----------------");
         
-        // See if population of array is correct
+        // // See if population of array is correct
         // System.out.println("---------------- INITIAL ARRAY ----------------");
         // print2DArray(this.lowResArray);
         // System.out.println("---------------- END OF INITIAL ARRAY ----------------");
 
+
+
+
         // First, we should interpolate per row, but only those rows that have values where we could interpolate
         interpolatePerRow(this.lowResArray);
-
         // Show how many clients we must wait for
         System.out.println("Waiting for " + this.numberOfClients + " client(s) to connect...");
 
-        // See if population of array is correct
-        // System.out.println("---------------- PARTIALLY INTERPOLATED ARRAY ----------------");
-        // print2DArray(this.lowResArray);
-        // System.out.println("---------------- END OF PARTIALLY INTERPOLATED ARRAY ----------------");
 
-        System.out.println("---------------- INITIALIZING SOCKET CONNECTION ----------------");
+
+        // See if population of array is correct
+        System.out.println("---------------- PARTIALLY INTERPOLATED ARRAY ----------------");
+        print2DArray(this.lowResArray);
+        System.out.println("---------------- END OF PARTIALLY INTERPOLATED ARRAY ----------------");
+
+
+        System.out.println("---------------- SUBDIVIDING ARRAY ----------------");
+        this.subMatrices = subdivideMatrices(this.lowResArray, this.numberOfClients);
+
+        // // for every 2D array from using subdivideMatrices, we print it
+        // for (ArrayList<ArrayList<Float>> submatrix : this.subdivideMatrices(this.lowResArray, this.numberOfClients)) {
+        //     System.out.println("---------------- SUBMATRIX ----------------");
+        //     print2DArray(submatrix);
+        //     System.out.println("---------------- END OF SUBMATRIX ----------------");
+        // }
+        System.out.println("---------------- END OF SUBDIVIDING ARRAY ----------------");
+
+
+
+
+        System.out.println("---------------- INITIALIZING SOCKET CONNECTION ----------------");        
         // Server starts and waits for a connection
         serverListen();
 
@@ -143,6 +163,35 @@ public class Server {
         }
         return populatedArr;
     }
+
+    private ArrayList<ArrayList<ArrayList<Float>>> subdivideMatrices(ArrayList<ArrayList<Float>> matrix, int numOfClients) {
+        int numRows = matrix.size();
+        int numCols = matrix.get(0).size();
+    
+        int numSubmatrices = numOfClients;
+        int numColsPerSubmatrix = numCols / numSubmatrices;
+        int remainingCols = numCols % numSubmatrices; // Number of columns remaining after division
+    
+        ArrayList<ArrayList<ArrayList<Float>>> submatrices = new ArrayList<>();
+    
+        int startCol = 0;
+        for (int i = 0; i < numSubmatrices; i++) {
+            int endCol = startCol + numColsPerSubmatrix + (remainingCols > 0 ? 1 : 0);
+            remainingCols--;
+    
+            ArrayList<ArrayList<Float>> submatrix = new ArrayList<>();
+    
+            for (int row = 0; row < numRows; row++) {
+                ArrayList<Float> subRow = new ArrayList<>(matrix.get(row).subList(startCol, endCol));
+                submatrix.add(subRow);
+            }
+    
+            submatrices.add(submatrix);
+            startCol = endCol;
+        }
+    
+        return submatrices;
+    }    
 
     // method for interpolating the missing grid points using the given data points (Federal Communications Commission (FCC) Interpolation)
     private Float solve(float y1, float x, float x1, float x2, float y2){
