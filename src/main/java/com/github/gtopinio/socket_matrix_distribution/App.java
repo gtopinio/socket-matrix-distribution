@@ -112,3 +112,13 @@ public class App
         return portNumber;
     }
 }
+
+/*
+ *  References:
+ *      - Socket Programming in Java:
+ *          GeekforGeeks. (n.d.). Socket Programming in Java. https://www.geeksforgeeks.org/socket-programming-in-java/
+ * 
+ *      - Why setting up a specific port for a Client is inefficient:
+ *        slim. (2017, April 27). How to set client port number in java? https://stackoverflow.com/a/43661589
+ * 
+ */
