@@ -149,6 +149,24 @@ public class Client {
                 System.out.println();
             }
 
+            
+            System.out.println("---------------- INTERPOLATING MISSING GRID POINTS ----------------");
+            // interpolate the missing grid points
+            this.interpolateMatrix(this.subMatrix);
+            
+
+            System.err.println("---------------- INTERPOLATED SUBMATRIX ----------------");
+            // print the interpolated submatrix
+            for (int i = 0; i < this.subMatrix.size(); i++) {
+                for (int j = 0; j < this.subMatrix.get(i).size(); j++) {
+                    System.out.print(this.subMatrix.get(i).get(j) + " ");
+                }
+                System.out.println();
+            }
+
+            // // send the interpolated submatrix to the server
+            // sendData(this.subMatrix);
+
             // close the connection
             this.socket.close();
         }
@@ -160,6 +178,32 @@ public class Client {
             System.out.println(i);
             return;
         }
+    }
+
+    public ArrayList<ArrayList<Float>> interpolateMatrix(ArrayList<ArrayList<Float>> matrix) {
+        for (int col = 0; col < matrix.get(0).size(); col++) {
+            int firstKnownValueIndex = -1;
+            for (int row = 0; row < matrix.size(); row++) {
+                if (matrix.get(row).get(col) != 0.0) {
+                    if (firstKnownValueIndex == -1) {
+                        firstKnownValueIndex = row;
+                    } else {
+                        int secondKnownValueIndex = row;
+                        float y1 = matrix.get(firstKnownValueIndex).get(col);
+                        float y2 = matrix.get(secondKnownValueIndex).get(col);
+                        float x1 = firstKnownValueIndex;
+                        float x2 = secondKnownValueIndex;
+                        for (int i = firstKnownValueIndex + 1; i < secondKnownValueIndex; i++) {
+                            float x = i;
+                            float interpolatedValue = solve(y1, x, x1, x2, y2);
+                            matrix.get(i).set(col, interpolatedValue);
+                        }
+                        firstKnownValueIndex = secondKnownValueIndex;
+                    }
+                }
+            }
+        }
+        return matrix;
     }
 
     // method for receiving the 2D submatrix from the server and sending an acknowledgement
@@ -198,6 +242,22 @@ public class Client {
         }
         return temp;
     }
+
+        // // method for sending the 2D submatrix to the client
+        // private void sendData(ArrayList<ArrayList<Float>> submatrix){
+        //     try{
+        //         // initialize output stream
+        //         ObjectOutputStream out = new ObjectOutputStream(this.socket.getOutputStream());
+        //         // send the submatrix to the client
+        //         out.writeObject(submatrix);
+        //         // flush the output stream
+        //         out.flush();
+        //         System.out.println("Submatrix sent to server successfully!");
+        //     }
+        //     catch(IOException i){
+        //         System.out.println(i);
+        //     }
+        // }
 
 
 }

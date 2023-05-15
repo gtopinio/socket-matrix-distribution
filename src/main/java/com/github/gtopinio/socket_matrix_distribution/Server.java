@@ -3,7 +3,6 @@ package com.github.gtopinio.socket_matrix_distribution;
 import java.net.*;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
@@ -113,6 +112,18 @@ public class Server {
         // Server starts and waits for a connection
         this.serverListen();
 
+
+
+        
+        System.out.println("---------------- CALCULATING RUNNING TIME ----------------");
+        // Calculate the running time
+        long elapsedTimeInMillis = endTime - startTime;
+        double elapsedTimeInSeconds = (double) elapsedTimeInMillis / 1000.0;
+        System.out.println("Execution time in milliseconds: " + (endTime - startTime) + " ms");
+        System.out.println("Elapsed time in seconds: " + elapsedTimeInSeconds + " seconds");
+
+        System.out.println("---------------- SERVER SHUTTING DOWN ----------------");
+
     }
 
     private void interpolatePerRow(ArrayList<ArrayList<Float>> arr) {
@@ -210,7 +221,6 @@ public class Server {
 
     // method for starting the server and listening for a connection
     private void serverListen(){
-        Boolean isRunning = true;
         int counterIndex = 0;
 
         try{
@@ -220,21 +230,28 @@ public class Server {
             System.out.println("Waiting for client(s) to connect...");
             
             // start the timer
-            this.startTime = System.nanoTime();
+            this.startTime = System.currentTimeMillis();
 
             // while the server is running, accept connections from clients
-            while(isRunning){
+            while(counterIndex != this.numberOfClients){
                 this.socket = server.accept();
                 System.out.println("Client connected using port " + this.socket.getPort());
 
                 // send the appropriate submatrix to the client by using the counterIndex as the index
                 sendData(this.subMatrices.get(counterIndex++), counterIndex);
                 
+                // // get and print the interpolated submatrix from the client using receiveData()
+                // ArrayList<ArrayList<Float>> interpolatedSubmatrix = receiveData();
+                // System.out.println("Interpolated submatrix from client " + counterIndex + ": ");
+                // print2DArray(interpolatedSubmatrix);
+                
             }
+
+            // stop the timer
+            this.endTime = System.currentTimeMillis();
             
             // close connection
-            // socket.close();
-            // in.close();
+            socket.close();
         }
         catch(IOException i)
         {
@@ -267,4 +284,29 @@ public class Server {
             System.out.println(i);
         }
     }
+
+        // // method for receiving the 2D submatrix from the client
+        // private ArrayList<ArrayList<Float>> receiveData() {
+        //     // initialize an empty submatrix
+        //     ArrayList<ArrayList<Float>> temp = new ArrayList<ArrayList<Float>>();
+        //     try {
+    
+        //         // initialize input stream
+        //         ObjectInputStream in = new ObjectInputStream(this.socket.getInputStream());
+        //         // receive the submatrix from the server
+        //         @SuppressWarnings("unchecked")
+        //         ArrayList<ArrayList<Float>> submatrix = (ArrayList<ArrayList<Float>>) in.readObject();
+    
+        //         // flush the input stream
+        //         // in.close();
+        //         System.out.println("Submatrix received from server successfully!");
+    
+        //         return submatrix;
+        //     } catch (IOException i) {
+        //         System.out.println(i);
+        //     } catch (ClassNotFoundException c) {
+        //         System.out.println(c);
+        //     }
+        //     return temp;
+        // }
 }
