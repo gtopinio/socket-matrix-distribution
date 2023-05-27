@@ -240,7 +240,7 @@ public class Server {
             this.server = new ServerSocket(this.portNumber);
             System.out.println("Server instantiated at port " + this.portNumber);
 
-            System.out.println("Waiting for client(s) to connect...");
+            System.out.println("Distrubuting submatrices...");
             
             // start the timer
             this.startTime = System.currentTimeMillis();

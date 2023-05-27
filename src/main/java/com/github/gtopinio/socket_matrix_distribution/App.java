@@ -15,6 +15,18 @@ public class App
     {
         System.out.println( "\n================ SOCKET MATRIX DISTRIBUTION APP ================");
 
+
+        // For devs only
+        if(args.length == 1 && args[0].equalsIgnoreCase("client")){
+            Client client = new Client(5001);
+            client.start();
+            return;
+        } else if(args.length == 2 && args[0].equalsIgnoreCase("server")){
+            Server server = new Server(Integer.parseInt(args[1]), 5000);
+            server.start();
+            return;
+        }
+
         // Read n, p and s as user input
         int n = -1;  // Size of the square matrix
         int p = -1;  // Port number
