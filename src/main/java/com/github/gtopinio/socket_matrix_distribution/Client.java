@@ -141,13 +141,13 @@ public class Client {
             this.subMatrix = receiveData();
 
             // print the submatrix
-            System.out.println("Submatrix received from server: ");
-            for (int i = 0; i < this.subMatrix.size(); i++) {
-                for (int j = 0; j < this.subMatrix.get(i).size(); j++) {
-                    System.out.print(this.subMatrix.get(i).get(j) + " ");
-                }
-                System.out.println();
-            }
+            // System.out.println("Submatrix received from server: ");
+            // for (int i = 0; i < this.subMatrix.size(); i++) {
+            //     for (int j = 0; j < this.subMatrix.get(i).size(); j++) {
+            //         System.out.print(this.subMatrix.get(i).get(j) + " ");
+            //     }
+            //     System.out.println();
+            // }
 
             
             System.out.println("---------------- INTERPOLATING MISSING GRID POINTS ----------------");
@@ -155,14 +155,14 @@ public class Client {
             this.interpolateMatrix(this.subMatrix);
             
 
-            System.err.println("---------------- INTERPOLATED SUBMATRIX ----------------");
-            // print the interpolated submatrix
-            for (int i = 0; i < this.subMatrix.size(); i++) {
-                for (int j = 0; j < this.subMatrix.get(i).size(); j++) {
-                    System.out.print(this.subMatrix.get(i).get(j) + " ");
-                }
-                System.out.println();
-            }
+            // System.err.println("---------------- INTERPOLATED SUBMATRIX ----------------");
+            // // print the interpolated submatrix
+            // for (int i = 0; i < this.subMatrix.size(); i++) {
+            //     for (int j = 0; j < this.subMatrix.get(i).size(); j++) {
+            //         System.out.print(this.subMatrix.get(i).get(j) + " ");
+            //     }
+            //     System.out.println();
+            // }
 
             // // send the interpolated submatrix to the server
             // sendData(this.subMatrix);
