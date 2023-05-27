@@ -54,6 +54,8 @@ client-ports=5001, 5002, 5003, 5004, 5005
 *Number of Clients*\
 num-clients = 3
 
+The user can freely change the configuration setup, as long as the number of clients specified in the configuration file matches the number of clients that will be created. Note that the program automatically assigns random port numbers to the clients from the ephemeral port range. This is done to avoid "address in use" failures and to establish an efficient assigning of ports to clients. However, the user must still input a port number within the range specified in the configuration file for the client to work. Otherwise, the client won't function properly, and the program will shut down automatically.
+
 ## Features
 
 The program offers the following main features and functionalities:
