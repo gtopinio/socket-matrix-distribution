@@ -15,10 +15,12 @@ To install and run this Java Maven project, follow these steps:
 1. Install Java on your machine if it's not already installed.
 2. Install Maven as well.
 3. Make a copy of the git repository: [https://github.com/gtopinio/socket-matrix-distribution](https://github.com/gtopinio/socket-matrix-distribution)
-4. Once Java and Maven are successfully installed, navigate to the `src` folder in the project directory.
+4. Once Java and Maven are successfully installed, navigate to the project directory.
 5. Run the command `mvn clean package` to generate the target folder where the JAR file will be located.
 6. After the JAR file is created, navigate to the target folder.
 7. Run the program using the command `java -jar socket-matrix-distribution-1.0.0.jar`.
+    - **Note:** If you're in any other operating system other than Windows, you need to change the path directories from the class files. Change the double backslashes to forward slashes. To do this easily, press `Ctrl + H` to open the Find and Replace dialog box. In the Find field, enter `\\` and in the Replace field, enter `/`. Click Replace All to replace all instances of double backslashes with forward slashes. 
+    - If there are any modifications to the project code or configuration file, the program must be recompiled using the command `mvn clean package` before running it again. If there are errors while recompling, run the command `mvn package` to clean the project and generate the JAR file.
 
 ## Usage
 
@@ -32,6 +34,7 @@ To use the program, follow these instructions:
 5. If the instance is a client, it will continuously wait for a connection to the server. The client will receive a submatrix distributed by the server and send an acknowledgement.
 6. After receiving the submatrix, the client will interpolate it and check if the interpolation is correct.
 7. The server will keep track of the time until all clients have sent an acknowledgement.
+    - **Note:** For the devs, for easier testing, you can run the server and clients using a different command. Run `java -jar socket-matrix-distribution-1.0.0.jar client` to run the client and `java -jar socket-matrix-distribution-1.0.0.jar server [size of matrix]` to run the server. This will automatically set the status of the instance to client or server, respectively.
 
 ## Configuration
 
