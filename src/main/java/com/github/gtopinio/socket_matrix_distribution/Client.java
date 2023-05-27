@@ -153,6 +153,13 @@ public class Client {
             System.out.println("---------------- INTERPOLATING MISSING GRID POINTS ----------------");
             // interpolate the missing grid points
             this.interpolateMatrix(this.subMatrix);
+
+            System.out.println("---------------- CHECKING INTERPOLATED SUBMATRIX ----------------");
+            if(this.checkInterpolation(this.subMatrix)){
+                System.out.println("SUCCESS: All missing grid points have been interpolated.");
+            } else {
+                System.out.println("ERROR: Not all missing grid points have been interpolated.");
+            }
             
 
             // System.err.println("---------------- INTERPOLATED SUBMATRIX ----------------");
@@ -180,7 +187,7 @@ public class Client {
         }
     }
 
-    public ArrayList<ArrayList<Float>> interpolateMatrix(ArrayList<ArrayList<Float>> matrix) {
+    private ArrayList<ArrayList<Float>> interpolateMatrix(ArrayList<ArrayList<Float>> matrix) {
         for (int col = 0; col < matrix.get(0).size(); col++) {
             int firstKnownValueIndex = -1;
             for (int row = 0; row < matrix.size(); row++) {
@@ -204,6 +211,37 @@ public class Client {
             }
         }
         return matrix;
+    }
+
+    // method for checking if the interpolated submatrix is correct
+    private boolean checkInterpolation(ArrayList<ArrayList<Float>> matrix) {
+        boolean isCorrect = true;
+        for (int col = 0; col < matrix.get(0).size(); col++) {
+            int firstKnownValueIndex = -1;
+            for (int row = 0; row < matrix.size(); row++) {
+                if (matrix.get(row).get(col) != 0.0) {
+                    if (firstKnownValueIndex == -1) {
+                        firstKnownValueIndex = row;
+                    } else {
+                        int secondKnownValueIndex = row;
+                        float y1 = matrix.get(firstKnownValueIndex).get(col);
+                        float y2 = matrix.get(secondKnownValueIndex).get(col);
+                        float x1 = firstKnownValueIndex;
+                        float x2 = secondKnownValueIndex;
+                        for (int i = firstKnownValueIndex + 1; i < secondKnownValueIndex; i++) {
+                            float x = i;
+                            float interpolatedValue = solve(y1, x, x1, x2, y2);
+                            if (interpolatedValue != matrix.get(i).get(col)) {
+                                isCorrect = false;
+                                break;
+                            }
+                        }
+                        firstKnownValueIndex = secondKnownValueIndex;
+                    }
+                }
+            }
+        }
+        return isCorrect;
     }
 
     // method for receiving the 2D submatrix from the server and sending an acknowledgement
