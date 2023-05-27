@@ -20,7 +20,7 @@ To install and run this Java Maven project, follow these steps:
 6. After the JAR file is created, navigate to the target folder.
 7. Run the program using the command `java -jar socket-matrix-distribution-1.0.0.jar`.
     - **Note:** If you're in any other operating system other than Windows, you need to change the path directories from the class files. Change the double backslashes to forward slashes. To do this easily, press `Ctrl + H` to open the Find and Replace dialog box. In the Find field, enter `\\` and in the Replace field, enter `/`. Click Replace All to replace all instances of double backslashes with forward slashes. 
-    - If there are any modifications to the project code or configuration file, the program must be recompiled using the command `mvn clean package` before running it again. If there are errors while recompling, run the command `mvn package` to clean the project and generate the JAR file.
+    - If there are any modifications to the project code (except to the configuration file), the program must be recompiled using the command `mvn clean package` before running it again. If there are errors while recompling, run the command `mvn package` to clean the project and generate the JAR file.
 
 ## Usage
 
