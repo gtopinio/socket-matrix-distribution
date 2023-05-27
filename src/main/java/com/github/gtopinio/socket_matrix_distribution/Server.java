@@ -83,12 +83,12 @@ public class Server {
         System.out.println("Waiting for " + this.numberOfClients + " client(s) to connect...");
 
 
-
+        System.out.println("---------------- PARTIALLY INTERPOLATING THE MATRIX ----------------");
 
         // See if population of array is correct
-        System.out.println("---------------- PARTIALLY INTERPOLATED ARRAY ----------------");
-        print2DArray(this.lowResArray);
-        System.out.println("---------------- END OF PARTIALLY INTERPOLATED ARRAY ----------------");
+        // System.out.println("---------------- PARTIALLY INTERPOLATED ARRAY ----------------");
+        // print2DArray(this.lowResArray);
+        // System.out.println("---------------- END OF PARTIALLY INTERPOLATED ARRAY ----------------");
 
 
 
