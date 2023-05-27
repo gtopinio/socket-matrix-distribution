@@ -3,8 +3,6 @@ package com.github.gtopinio.socket_matrix_distribution;
 import java.net.*;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +12,8 @@ import java.util.Random;
 public class Server {
     private int arraySize;
     private int portNumber;
-    private int numberOfClients;
+    private static int numberOfClients;
+    private boolean closeServer;
     private ArrayList<ArrayList<Float>> lowResArray;    // Used for the initial form of the array (low resolution)
     private ArrayList<ArrayList<ArrayList<Float>>> subMatrices; // Used for the subdivideMatrices method
     private long startTime;                             // start time variable
@@ -27,10 +26,24 @@ public class Server {
     public Server(int n, int p) {
         this.arraySize = n;
         this.portNumber = p;
-        this.numberOfClients = this.readConfigFile();
+        numberOfClients = this.readConfigFile();
         this.lowResArray = populateArray(this.arraySize);
+        this.closeServer = false;
     }
 
+    void setCloseServer(boolean flag) {
+        closeServer = flag;
+    }
+
+    boolean getCloseServer() {
+        return closeServer;
+    }
+
+    static int getNumberOfClients() {
+        return numberOfClients;
+    }
+
+    // method to read the configuration file and set up initial values
     private int readConfigFile() {
         // Read the 'socket-comm.conf' file from the resources folder
         // The file contains the IP address of the server
@@ -80,7 +93,7 @@ public class Server {
         // First, we should interpolate per row, but only those rows that have values where we could interpolate
         interpolatePerRow(this.lowResArray);
         // Show how many clients we must wait for
-        System.out.println("Waiting for " + this.numberOfClients + " client(s) to connect...");
+        System.out.println("Waiting for " + numberOfClients + " client(s) to connect...");
 
 
         System.out.println("---------------- PARTIALLY INTERPOLATING THE MATRIX ----------------");
@@ -95,7 +108,7 @@ public class Server {
 
         System.out.println("---------------- SUBDIVIDING ARRAY ----------------");
         // Subdivide the array into submatrices
-        this.subMatrices = subdivideMatrices(this.lowResArray, this.numberOfClients);
+        this.subMatrices = subdivideMatrices(this.lowResArray, numberOfClients);
 
         // // for every 2D array from using subdivideMatrices, we print it
         // for (ArrayList<ArrayList<Float>> submatrix : this.subdivideMatrices(this.lowResArray, this.numberOfClients)) {
@@ -126,6 +139,7 @@ public class Server {
 
     }
 
+    // method to interpolate the matrix per row to ready it for subdivision
     private void interpolatePerRow(ArrayList<ArrayList<Float>> arr) {
         for (List<Float> row : arr) {
             int start = -1;
@@ -221,9 +235,8 @@ public class Server {
 
     // method for starting the server and listening for a connection
     private void serverListen(){
-        int counterIndex = 0;
-
         try{
+            int counter = 0;
             this.server = new ServerSocket(this.portNumber);
             System.out.println("Server instantiated at port " + this.portNumber);
 
@@ -232,55 +245,23 @@ public class Server {
             // start the timer
             this.startTime = System.currentTimeMillis();
 
-            // while the server is running, accept connections from clients
-            while(counterIndex != this.numberOfClients){
+            // while the server is running, accept the right number of connections from clients
+            for(int i=0; i<numberOfClients; i++){
                 this.socket = server.accept();
-                System.out.println("Client connected using port " + this.socket.getPort());
 
-                // send the appropriate submatrix to the client by using the counterIndex as the index
-                sendData(this.subMatrices.get(counterIndex++), counterIndex);
-                
-                // // get and print the interpolated submatrix from the client using receiveData()
-                // ArrayList<ArrayList<Float>> interpolatedSubmatrix = receiveData();
-                // System.out.println("Interpolated submatrix from client " + counterIndex + ": ");
-                // print2DArray(interpolatedSubmatrix);
-                
+                // create a new thread to handle the client
+                Thread clientThread = new Thread(new ClientHandler(this.socket, this.subMatrices, counter++));
+                clientThread.start();
             }
+
+            // Wait until the expected number of ACKs is received
+            while (ClientHandler.getNumOfAcks() != numberOfClients);
 
             // stop the timer
             this.endTime = System.currentTimeMillis();
-            
-            // close connection
-            socket.close();
         }
         catch(IOException i)
         {
-            System.out.println(i);
-        }
-    }
-    
-    // method for sending the 2D submatrix to the client
-    private void sendData(ArrayList<ArrayList<Float>> submatrix, int index){
-        try{
-            // initialize output stream
-            ObjectOutputStream out = new ObjectOutputStream(this.socket.getOutputStream());
-            // send the submatrix to the client
-            out.writeObject(submatrix);
-            // flush the output stream
-            out.flush();
-            System.out.println("Submatrix sent to client " + index + " successfully!");
-
-            // try to receive an "ACK" from the client
-            try{
-                ObjectInputStream in = new ObjectInputStream(this.socket.getInputStream());
-                String ack = (String) in.readObject();
-                System.out.println("Received from client " + index + ": " + ack);
-            }
-            catch(ClassNotFoundException e){
-                System.out.println(e);
-            }
-        }
-        catch(IOException i){
             System.out.println(i);
         }
     }

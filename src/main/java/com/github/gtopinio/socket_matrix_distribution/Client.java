@@ -103,6 +103,8 @@ public class Client {
                 System.out.println("SUCCESS: The port number of this client is in the list of client port numbers in the configuration file.");
                 isSuccessful = true;
             }
+
+            System.out.println("---------------- CLIENT SHUTTING DOWN ----------------");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -173,6 +175,8 @@ public class Client {
 
             // // send the interpolated submatrix to the server
             // sendData(this.subMatrix);
+
+            System.out.println("---------------- CLIENT SHUTTING DOWN ----------------");
 
             // close the connection
             this.socket.close();
