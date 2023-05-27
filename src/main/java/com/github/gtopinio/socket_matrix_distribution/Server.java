@@ -148,7 +148,7 @@ public class Server {
     }
 
     // method to print 2D array
-    private void print2DArray(ArrayList<ArrayList<Float>> arr){
+    void print2DArray(ArrayList<ArrayList<Float>> arr){
         for(ArrayList<Float> sub: arr){
             System.out.println(sub);    // prints per row
         }
