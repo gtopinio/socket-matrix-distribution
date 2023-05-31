@@ -59,8 +59,18 @@ public class Server {
             String basePath = new java.io.File(".").getCanonicalPath();
             
             // Then get the socket-comm.conf file from the resources folder by replacing the "\target" part of the path
-            // with "\src\main\java\com\github\gtopinio\socket_matrix_distribution\resources\socket-comm.conf"
-            String path = basePath.replace("\\target", "\\src\\main\\java\\com\\github\\gtopinio\\socket_matrix_distribution\\resources\\socket-comm.conf");
+            // with "\\src\\main\\java\\com\\github\\gtopinio\\socket_matrix_distribution\\resources\\socket-comm.conf" [for Windows]
+            // or with "/src/main/java/com/github/gtopinio/socket_matrix_distribution/resources/socket-comm.conf" [for Linux]
+            String path = "";
+            
+            try {
+                path = basePath.replace("/target", "/src/main/java/com/github/gtopinio/socket_matrix_distribution/resources/socket-comm.conf");
+            } catch (Exception e) {
+               
+            } finally {
+                path = basePath.replace("\\target", "\\src\\main\\java\\com\\github\\gtopinio\\socket_matrix_distribution\\resources\\socket-comm.conf");
+            }
+
 
             // Put the path to the input stream
             input = new FileInputStream(path);
