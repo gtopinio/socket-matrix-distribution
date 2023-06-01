@@ -22,7 +22,7 @@ public class App
             client.start();
             return;
         } else if(args.length == 2 && args[0].equalsIgnoreCase("server")){
-            Server server = new Server(Integer.parseInt(args[1]+1), 5000);
+            Server server = new Server(Integer.parseInt(args[1]) + 1, 5000);
             server.start();
             return;
         }
